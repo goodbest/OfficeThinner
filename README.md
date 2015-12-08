@@ -10,9 +10,7 @@ Nearly 3.7GB HDD/SDD space can be saved.
 
 ## Usage
 ```
-curl https://raw.githubusercontent.com/goodbest/OfficeThinner/master/OfficeThinner.sh -o OfficeThinner.sh
-chmod +x OfficeThinner.sh
-sudo OfficeThinner.sh
+sudo bash -c "curl -s https://raw.githubusercontent.com/goodbest/OfficeThinner/master/OfficeThinner.sh | bash"
 ```
 - As Microsoft Office 2016 for Mac is installed with `root` on `/Applications`, you have to run this script with `sudo`.
 - The backup files are located at `~/Desktop/OfficeThinner`, you can do whatever you like with them if everything is fine.
