@@ -5,8 +5,8 @@
 # Use at your own risk.
 
 # Some large-sized duplicate files exist in Word.app, Excel.app, PowerPoint.app, Outlook.app and OneNote.app in Office 2016 for Mac.
-# This is wasting your precious SSD space as these duplicate files are stored in 5 different directories that are actually not neccessary.
-# This script will delete some of the duplicate files in Excel, PowerPoint, Outlook and OneNote, and then soft link them back to the real files in Word.app alone.
+# It's wasting your precious HDD/SSD space as these files are just 5 duplicate copies in these apps.
+# This script moves some of the duplicate files from Excel, PowerPoint, Outlook and OneNote into a backup directory, and then soft link neccesary paths back to the real files in Word.app alone.
 
 # Author: goodbest
 # Repo: https://github.com/goodbest/OfficeThinner
