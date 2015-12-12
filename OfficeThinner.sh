@@ -31,7 +31,11 @@ appPathArray=( $ExcelPATH $PowerPointPATH $OutlookPATH $OneNotePATH )
 # Comparison Result:  Word = Excel = Powerpoint, Outlook is subset of Word, OneNote is subset of Word
 # ==============================
 fontPATH="/Contents/Resources/"
-fontName="Fonts"
+if [ -d "$basePATH$WordPATH$fontPATH/DFonts" ]; then
+    fontName="DFonts"
+else
+    fontName="Fonts"
+fi
 echo "Thinning Fonts, it saves you ~1.4G space"
 for appPATH in "${appPathArray[@]}";
 do
