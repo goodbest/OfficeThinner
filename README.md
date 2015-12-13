@@ -11,6 +11,7 @@ Nearly 3.7GB HDD/SDD space can be saved.
   - version `15.17 (151206)`
 - Use at your own risk.
 - Read the code before you run.
+- Make sure all the 5 Office Apps are in the same version.
 
 ## Usage
 ```
