@@ -40,7 +40,7 @@ link_that(){
     for thing; do
         # skip inexist ones.. should reduce mess.
         [[ -e $1.app/$thing/ ]] || continue
-        thing_dn=$(dirname "$pth")
+        thing_dn=$(dirname "$thing")
         thing_bk="$backupPath/$2.app/$thing_dn/"
         mkdir -p "$thing_bk"
         sudo mv "$2.app/$thing" "$thing_bk/"
@@ -53,7 +53,7 @@ link_that(){
 diskUsage(){
     local apps_pth
     apps_pth=("${apps[@]/%/.app}")
-    apps_pth=("${apps[@]/#/$1}")
+    apps_pth=("${apps[@]/#/${1:-$basePath}")
     du -sh "${apps_pth[@]}"
 }
 
