@@ -37,9 +37,9 @@ link_that(){
         thing_dn=$(dirname "$pth")
         thing_bk="$backupPath/$2.app/$thing_dn/"
         mkdir -p "$thing_bk"
-        sudo mv "$2/$thing" "$thing_bk/"
+        sudo mv "$2.app/$thing" "$thing_bk/"
         # Using the (possibly) least ambiguous POSIX ln call.. (-> dir)
-        sudo ln -s "$1/$thing/" "$2/$thing_dn/"
+        sudo ln -s "$1.app/$thing/" "$2.app/$thing_dn/"
     done
 }
 
