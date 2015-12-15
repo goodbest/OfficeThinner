@@ -24,16 +24,22 @@ apps=( 'Microsoft '{Word,Excel,Powerpoint,Outlook,Onenote} )
 link_this(){
     # set -xv
     local officeApp
+    # printf >&2 'Processing'
+    # printf >&2 ' [%s]' "$@"
+    # printf >&2 '...\n'
     for officeApp in "${apps[@]:1}"; do
-        # printf >&2 'Eating %s...' "$officeApp"
+        # printf >&2 '--> In %s...\n' "$officeApp"
         link_that "${apps[0]}" "$officeApp" "$@"
     done
     # set +xv
 }
 # link_that sourceApp targetApp paths_to_eat...
+# Adding `-v` to `mv` and `ln` may potentially make users happier..
 link_that(){
     local thing thing_bk thing_dn
     for thing; do
+        # skip inexist ones.. should reduce mess.
+        [[ -e $1.app/$thing/ ]] || continue
         thing_dn=$(dirname "$pth")
         thing_bk="$backupPath/$2.app/$thing_dn/"
         mkdir -p "$thing_bk"
@@ -58,9 +64,7 @@ diskUsage
 # Phase I: Deal with Fonts
 # Comparison Result:  Word = Excel = Powerpoint, Outlook and Onenote are subsets of Word
 # ==============================
-appResources="Contents/Resources/"
-# XXX: what's the difference? should we symlink both?
-if [ -d "$basePath/$WordPath/$appResources/DFonts" ]; then
+if [ -d "$basePath/${apps[0]}.app/Contents/Resources/DFonts" ]; then
     fontDir="DFonts"
 else
     fontDir="Fonts"
