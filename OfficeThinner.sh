@@ -23,9 +23,21 @@ PowerPointPATH="Microsoft PowerPoint.app"
 OutlookPATH="Microsoft Outlook.app"
 OneNotePATH="Microsoft OneNote.app"
 
-#You must keep the following line, in order to deal with spaces in the FOR loop
-IFS=""
-appPathArray=( $ExcelPATH $PowerPointPATH $OutlookPATH $OneNotePATH )
+# Symbolic link the files in following 4 apps to Word.app
+appPathArray=( "$ExcelPATH" "$PowerPointPATH" "$OutlookPATH" "$OneNotePATH" )
+
+# Disk Usage Display
+diskUsage(){
+    du -sh "$basePATH$WordPATH"
+    du -sh "$basePATH$ExcelPATH"
+    du -sh "$basePATH$PowerPointPATH"
+    du -sh "$basePATH$OutlookPATH"
+    du -sh "$basePATH$OneNotePATH"
+    echo ""
+}
+
+echo "Before running this script, Office is taking:"
+diskUsage
 
 # ==============================
 # Phase I: Deal with Fonts
@@ -85,9 +97,10 @@ do
     # echo "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
 done
 
-echo ""
 echo "Office Thinning Complete."
-echo "The duplicate files are backed up at $backupPATH"
 echo ""
-echo "If everything is OK, you may delete them. But the choice is yours."
+echo "After running this script, Office is taking:"
+diskUsage
+echo "The duplicate files are backed up at $backupPATH"
+echo "If everything is OK, you may delete these files. But the choice is yours."
 echo "You may have to re-run this script after you install Microsoft Office updates"
