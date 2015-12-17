@@ -12,28 +12,50 @@
 # Author: goodbest
 # Repo: https://github.com/goodbest/OfficeThinner
 
+# Configs. You can change paths here
+basePath="/Applications/"
+backupPath="$HOME/Desktop/OfficeThinnerBackup/"
 
-# Configs. You can change path here
-basePATH="/Applications/"
-backupPATH="$HOME/Desktop/OfficeThinnerBackup/"
+# Symbolic link the relevant files in the apps to the first one
+apps=( 'Microsoft '{Word,Excel,Powerpoint,Outlook,Onenote} )
 
-WordPATH="Microsoft Word.app"
-ExcelPATH="Microsoft Excel.app"
-PowerPointPATH="Microsoft PowerPoint.app"
-OutlookPATH="Microsoft Outlook.app"
-OneNotePATH="Microsoft OneNote.app"
-
-# Symbolic link the files in following 4 apps to Word.app
-appPathArray=( "$ExcelPATH" "$PowerPointPATH" "$OutlookPATH" "$OneNotePATH" )
+# link_this RELATIVE_PATH_FROM_.app_DIRs...
+# if you want to debug this, well.. uncomment the `set`s. Human (like me) make mistakes.
+link_this(){
+    # set -xv
+    local officeApp
+    # printf >&2 'Processing'
+    # printf >&2 ' [%s]' "$@"
+    # printf >&2 '...\n'
+    for officeApp in "${apps[@]:1}"; do
+        # printf >&2 '--> In %s...\n' "$officeApp"
+        link_that "${apps[0]}" "$officeApp" "$@"
+    done
+    # set +xv
+}
+# link_that targetApp sourceApp paths_to_eat...
+# Adding `-v` to `mv` and `ln` may potentially make users happier..
+link_that(){
+    local thing thing_bk thing_dn ref="$1" src="$2"
+    shift 2
+    for thing; do
+        # skip inexist ones.. should reduce mess.
+        [[ -e $basePath/$dst.app/$thing && -e $basePath/$ref.app/$thing ]] || continue
+        thing_dn=$(dirname "$thing")
+        thing_bk="$basePath/$backupPath/$src.app/$thing_dn/"
+        mkdir -p "$thing_bk"
+        sudo mv "$basePath/$src.app/$thing" "$thing_bk/"
+        # Using the (possibly) least ambiguous POSIX ln call.. (-> dir)
+        sudo ln -s "$basePath/$ref.app/$thing/" "$basePath/$src.app/$thing_dn/"
+    done
+}
 
 # Disk Usage Display
 diskUsage(){
-    du -sh "$basePATH$WordPATH"
-    du -sh "$basePATH$ExcelPATH"
-    du -sh "$basePATH$PowerPointPATH"
-    du -sh "$basePATH$OutlookPATH"
-    du -sh "$basePATH$OneNotePATH"
-    echo ""
+    local apps_pth
+    apps_pth=("${apps[@]/%/.app}")
+    apps_pth=("${apps[@]/#/${1:-$basePath}")
+    du -sh "${apps_pth[@]}"
 }
 
 echo "Before running this script, Office is taking:"
@@ -41,66 +63,35 @@ diskUsage
 
 # ==============================
 # Phase I: Deal with Fonts
-# Comparison Result:  Word = Excel = Powerpoint, Outlook is subset of Word, OneNote is subset of Word
+# Comparison Result:  Word = Excel = Powerpoint, Outlook and Onenote are subsets of Word
 # ==============================
-fontPATH="/Contents/Resources/"
-if [ -d "$basePATH$WordPATH$fontPATH/DFonts" ]; then
-    fontName="DFonts"
+if [ -d "$basePath/${apps[0]}.app/Contents/Resources/DFonts" ]; then
+    fontDir="DFonts"
 else
-    fontName="Fonts"
+    fontDir="Fonts"
 fi
 echo "Thinning Fonts, it saves you ~1.4G space"
-for appPATH in "${appPathArray[@]}";
-do
-    appName=${appPATH/.app/}
-    mkdir -p "$backupPATH$appName$fontPATH"
-    # echo "$backupPATH$appName$fontPATH"
-    sudo mv "$basePATH$appPATH$fontPATH$fontName" "$backupPATH$appName$fontPATH"
-    sudo ln -s "$basePATH$WordPATH$fontPATH$fontName" "$basePATH$appPATH$fontPATH$fontName"
-    # echo "$basePATH$appPATH$fontPATH$fontName" "$backupPATH$appName$fontPATH"
-    # echo "$basePATH$WordPATH$fontPATH$fontName" "$basePATH$appPATH$fontPATH$fontName"
-done
+link_this "Contents/Resources/$fontDir"
 
 # ==============================
 # Phase II: Deal with Proofing Tools
 # Comparison Result:  Word = Excel = Powerpoint = Outlook, OneNote is subset of Word
 # ==============================
-proofingPATH="/Contents/SharedSupport/"
-proofingName="Proofing Tools"
 echo "Thinning Proofing Tools, it saves you ~1.5G space"
-for appPATH in "${appPathArray[@]}";
-do
-    appName=${appPATH/.app/}
-    mkdir -p "$backupPATH$appName$proofingPATH"
-    # echo "$backupPATH$appName$proofingPATH"
-    sudo mv "$basePATH$appPATH$proofingPATH$proofingName" "$backupPATH$appName$proofingPATH"
-    sudo ln -s "$basePATH$WordPATH$proofingPATH$proofingName" "$basePATH$appPATH$proofingPATH$proofingName"
-    # echo "$basePATH$appPATH$proofingPATH$proofingName" "$backupPATH$appName$proofingPATH"
-    # echo "$basePATH$WordPATH$proofingPATH$proofingName" "$basePATH$appPATH$proofingPATH$proofingName"
-done
+link_this "Contents/SharedSupport/Proofing Tools"
 
 # ==============================
 # Phase III: Deal with MicrosoftOffice.framework
 # Comparison Result:  Word = Excel = Powerpoint = Outlook = OneNote
 # ==============================
-frameworkPATH="/Contents/Frameworks/MicrosoftOffice.framework/Versions/A/"
-frameworkName="Resources"
 echo "Thinning MicrosoftOffice.framework, it saves you ~0.8G space"
-for appPATH in "${appPathArray[@]}";
-do
-    appName=${appPATH/.app/}
-    mkdir -p "$backupPATH$appName$frameworkPATH"
-    # echo "$backupPATH$appName$frameworkPATH"
-    sudo mv "$basePATH$appPATH$frameworkPATH$frameworkName" "$backupPATH$appName$frameworkPATH"
-    sudo ln -s "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
-    # echo "$basePATH$appPATH$frameworkPATH$frameworkName" "$backupPATH$appName$frameworkPATH"
-    # echo "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
-done
+# Shouldn't we just deal with the '.framework' instead?
+link_this "Contents/Frameworks/MicrosoftOffice.framework/Versions/A/Resources"
 
 echo "Office Thinning Complete."
 echo ""
 echo "After running this script, Office is taking:"
 diskUsage
-echo "The duplicate files are backed up at $backupPATH"
+echo "The duplicate files are backed up at $backupPath"
 echo "If everything is OK, you may delete these files. But the choice is yours."
 echo "You may have to re-run this script after you install Microsoft Office updates"
