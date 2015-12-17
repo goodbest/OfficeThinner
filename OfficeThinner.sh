@@ -40,13 +40,13 @@ link_that(){
     shift 2
     for thing; do
         # skip inexist ones.. should reduce mess.
-        [[ -e $dst.app/$thing && -e $ref.app/$thing ]] || continue
+        [[ -e $basePath/$dst.app/$thing && -e $basePath/$ref.app/$thing ]] || continue
         thing_dn=$(dirname "$thing")
-        thing_bk="$backupPath/$src.app/$thing_dn/"
+        thing_bk="$basePath/$backupPath/$src.app/$thing_dn/"
         mkdir -p "$thing_bk"
-        sudo mv "$src.app/$thing" "$thing_bk/"
+        sudo mv "$basePath/$src.app/$thing" "$thing_bk/"
         # Using the (possibly) least ambiguous POSIX ln call.. (-> dir)
-        sudo ln -s "$ref.app/$thing/" "$src.app/$thing_dn/"
+        sudo ln -s "$basePath/$ref.app/$thing/" "$basePath/$src.app/$thing_dn/"
     done
 }
 
