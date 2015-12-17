@@ -33,19 +33,20 @@ link_this(){
     done
     # set +xv
 }
-# link_that sourceApp targetApp paths_to_eat...
+# link_that targetApp sourceApp paths_to_eat...
 # Adding `-v` to `mv` and `ln` may potentially make users happier..
 link_that(){
-    local thing thing_bk thing_dn
+    local thing thing_bk thing_dn ref="$1" src="$2"
+    shift 2
     for thing; do
         # skip inexist ones.. should reduce mess.
-        [[ -e $1.app/$thing/ ]] || continue
+        [[ -e $dst.app/$thing && -e $ref.app/$thing ]] || continue
         thing_dn=$(dirname "$thing")
-        thing_bk="$backupPath/$2.app/$thing_dn/"
+        thing_bk="$backupPath/$src.app/$thing_dn/"
         mkdir -p "$thing_bk"
-        sudo mv "$2.app/$thing" "$thing_bk/"
+        sudo mv "$src.app/$thing" "$thing_bk/"
         # Using the (possibly) least ambiguous POSIX ln call.. (-> dir)
-        sudo ln -s "$1.app/$thing/" "$2.app/$thing_dn/"
+        sudo ln -s "$ref.app/$thing/" "$src.app/$thing_dn/"
     done
 }
 
