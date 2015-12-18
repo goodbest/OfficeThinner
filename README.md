@@ -1,7 +1,7 @@
 # OfficeThinner
 Save your disk space with Office 2016 for Mac.
 
-Nearly 3.7GB HDD/SDD space can be saved.
+Nearly 2.9GB HDD/SDD space can be saved.
 
 ![compare](fig_compare.jpg)
 
@@ -31,6 +31,6 @@ This script moves the following duplicate files from Excel, PowerPoint, Outlook 
 - /Contents/Resources/Fonts (<=15.16)
 - /Contents/Resources/DFonts (>=15.17)
 - /Contents/SharedSupport/Proofing Tools
-- /Contents/Frameworks/MicrosoftOffice.framework/Versions/A/Resources
+- ~~/Contents/Frameworks/MicrosoftOffice.framework/Versions/A/Resources~~
 
 
