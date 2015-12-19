@@ -52,14 +52,14 @@ if [ ${#appPathArray[@]} -eq 0 ]; then
 fi
 
 # Add y/n choice.
-read -n1 -r -p "Do you want to continue? y/n..." key
-if [ "$key" != 'y' ]; then
-    if  [ "$key" != 'Y' ]; then
-        echo ""
-        echo "Terminated. Bye"
-        exit
-    fi
-fi
+# read -n1 -r -p "Do you want to continue? y/n..." key
+# if [ "$key" != 'y' ]; then
+#     if [ "$key" != 'Y' ]; then
+#         echo ""
+#         echo "Terminated. Bye"
+#         exit
+#     fi
+# fi
 
 # Disk Usage Display
 diskUsage(){
