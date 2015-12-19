@@ -53,8 +53,8 @@ fi
 
 # Add y/n choice.
 read -n1 -r -p "Do you want to continue? y/n..." key
-if [ ! "$key" == 'y' ]; then
-    if  [ ! "$key" == 'Y' ]; then
+if [ "$key" != 'y' ]; then
+    if  [ "$key" != 'Y' ]; then
         echo ""
         echo "Terminated. Bye"
         exit
