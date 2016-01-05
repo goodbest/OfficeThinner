@@ -1,3 +1,7 @@
+# Things You Must Understand Before Using:
+Read it twice, please:
+https://github.com/goodbest/OfficeThinner/issues/7
+
 # OfficeThinner
 Save your disk space with Office 2016 for Mac.
 
