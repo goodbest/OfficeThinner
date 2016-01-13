@@ -3,6 +3,7 @@
 # This script is only for Office 2016 for Mac.
 # Tested on Office version 15.16 (151105)
 # Tested on Office version 15.17 (151206)
+# Tested on Office version 15.18 (160109)
 # Use at your own risk.
 
 # Some large-sized duplicate files exist in Word.app, Excel.app, PowerPoint.app, Outlook.app and OneNote.app in Office 2016 for Mac.

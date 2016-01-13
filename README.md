@@ -13,6 +13,7 @@ Nearly 2.9GB HDD/SDD space can be saved.
 - This script is only for `Office 2016 for Mac`, tested on 
   - version `15.16 (151105)`
   - version `15.17 (151206)`
+  - version `15.18 (160109)`
 - Use at your own risk.
 - Read the code before you run.
 - Make sure all the 5 Office Apps are in the same version.
