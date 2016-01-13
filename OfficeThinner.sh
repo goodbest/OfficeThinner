@@ -34,12 +34,16 @@ appPathArrayPending=( "$ExcelPATH" "$PowerPointPATH" "$OutlookPATH" "$OneNotePAT
 appPathArray=()
 for appPATH in "${appPathArrayPending[@]}";
 do
-    appVersion=$(defaults read "$basePATH$appPATH$versionPATH" $versionKey)
-    if [ $wordVersion == $appVersion ]; then
-        appPathArray+=("$appPATH")
-    else
-        echo "WARNING: WILL NOT deal with ${appPATH/.app/}. It is version $appVersion, but Word is $wordVersion"
-    fi
+	if [ -d "$basePATH$appPATH" ]; then
+		appVersion=$(defaults read "$basePATH$appPATH$versionPATH" $versionKey)
+		if [ $wordVersion == $appVersion ]; then
+			appPathArray+=("$appPATH")
+		else
+			echo "WARNING: WILL NOT deal with ${appPATH/.app/}. It is version $appVersion, but Word is $wordVersion"
+		fi
+	else
+		echo "WARNING: WILL NOT deal with ${appPATH/.app/}. It is NOT installed."
+	fi
 done
 for appPATH in "${appPathArray[@]}";
 do
