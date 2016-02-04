@@ -2,6 +2,8 @@
 
 # This script is only for Office 2016 for Mac.
 # Tested on Office version 15.16 (151105)
+# Tested on Office version 15.17 (151206)
+# Tested on Office version 15.18 (160109)
 # Use at your own risk.
 
 # Some large-sized duplicate files exist in Word.app, Excel.app, PowerPoint.app, Outlook.app and OneNote.app in Office 2016 for Mac.
@@ -22,17 +24,73 @@ PowerPointPATH="Microsoft PowerPoint.app"
 OutlookPATH="Microsoft Outlook.app"
 OneNotePATH="Microsoft OneNote.app"
 
-#You must keep the following line, in order to deal with spaces in the FOR loop
-IFS=""
-appPathArray=( $ExcelPATH $PowerPointPATH $OutlookPATH $OneNotePATH )
+# Symbolic link the files in following 4 apps to Word.app.
+# If an app's version is not same with Word, it will be excluded.
+versionPATH="/Contents/Info.plist"
+versionKey="CFBundleShortVersionString"
+wordVersion=$(defaults read "$basePATH$WordPATH$versionPATH" $versionKey)
+
+appPathArrayPending=( "$ExcelPATH" "$PowerPointPATH" "$OutlookPATH" "$OneNotePATH" )
+appPathArray=()
+for appPATH in "${appPathArrayPending[@]}";
+do
+	if [ -d "$basePATH$appPATH" ]; then
+		appVersion=$(defaults read "$basePATH$appPATH$versionPATH" $versionKey)
+		if [ $wordVersion == $appVersion ]; then
+			appPathArray+=("$appPATH")
+		else
+			echo "WARNING: WILL NOT deal with ${appPATH/.app/}. It is version $appVersion, but Word is $wordVersion"
+		fi
+	else
+		echo "WARNING: WILL NOT deal with ${appPATH/.app/}. It is NOT installed."
+	fi
+done
+for appPATH in "${appPathArray[@]}";
+do
+     echo "WILL deal with ${appPATH/.app/}."
+done
+
+# If all apps are excluded, just exit the script.
+if [ ${#appPathArray[@]} -eq 0 ]; then
+    echo "No app will be dealed. Bye"
+    exit
+fi
+
+# Add y/n choice.
+read -n1 -r -p "Do you want to continue? y/n..." key < /dev/tty
+if [ "$key" != 'y' ]; then
+    if [ "$key" != 'Y' ]; then
+        echo ""
+        echo "Terminated. Bye"
+        exit
+    fi
+fi
+
+# Disk Usage Display
+diskUsage(){
+    for appPATH in "${@}";
+    do
+        du -sh "$basePATH$appPATH"
+    done
+    echo ""
+}
+
+echo ""
+echo ""
+echo "Before running this script, Office is taking:"
+diskUsage "${appPathArray[@]}"
 
 # ==============================
 # Phase I: Deal with Fonts
 # Comparison Result:  Word = Excel = Powerpoint, Outlook is subset of Word, OneNote is subset of Word
 # ==============================
 fontPATH="/Contents/Resources/"
-fontName="Fonts"
-echo "Thinning Fonts, it saves you ~1.4G space"
+if [ -d "$basePATH$WordPATH$fontPATH/DFonts" ]; then
+    fontName="DFonts"
+else
+    fontName="Fonts"
+fi
+# echo "Thinning Fonts, it saves you ~1.4G space"
 for appPATH in "${appPathArray[@]}";
 do
     appName=${appPATH/.app/}
@@ -50,7 +108,7 @@ done
 # ==============================
 proofingPATH="/Contents/SharedSupport/"
 proofingName="Proofing Tools"
-echo "Thinning Proofing Tools, it saves you ~1.5G space"
+# echo "Thinning Proofing Tools, it saves you ~1.5G space"
 for appPATH in "${appPathArray[@]}";
 do
     appName=${appPATH/.app/}
@@ -65,24 +123,27 @@ done
 # ==============================
 # Phase III: Deal with MicrosoftOffice.framework
 # Comparison Result:  Word = Excel = Powerpoint = Outlook = OneNote
+# Maybe it's not a good idea to symbolic link this.
 # ==============================
-frameworkPATH="/Contents/Frameworks/MicrosoftOffice.framework/Versions/A/"
-frameworkName="Resources"
-echo "Thinning MicrosoftOffice.framework, it saves you ~0.8G space"
-for appPATH in "${appPathArray[@]}";
-do
-    appName=${appPATH/.app/}
-    mkdir -p "$backupPATH$appName$frameworkPATH"
+# frameworkPATH="/Contents/Frameworks/MicrosoftOffice.framework/Versions/A/"
+# frameworkName="Resources"
+# echo "Thinning MicrosoftOffice.framework, it saves you ~0.8G space"
+# for appPATH in "${appPathArray[@]}";
+# do
+    # appName=${appPATH/.app/}
+    # mkdir -p "$backupPATH$appName$frameworkPATH"
     # echo "$backupPATH$appName$frameworkPATH"
-    sudo mv "$basePATH$appPATH$frameworkPATH$frameworkName" "$backupPATH$appName$frameworkPATH"
-    sudo ln -s "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
+    # sudo mv "$basePATH$appPATH$frameworkPATH$frameworkName" "$backupPATH$appName$frameworkPATH"
+    # sudo ln -s "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
     # echo "$basePATH$appPATH$frameworkPATH$frameworkName" "$backupPATH$appName$frameworkPATH"
     # echo "$basePATH$WordPATH$frameworkPATH$frameworkName" "$basePATH$appPATH$frameworkPATH$frameworkName"
-done
+# done
 
-echo ""
+
+echo "After running this script, Office is taking:"
+diskUsage "${appPathArray[@]}"
+
 echo "Office Thinning Complete."
 echo "The duplicate files are backed up at $backupPATH"
-echo ""
-echo "If everything is OK, you may delete them. But the choice is yours."
+echo "If everything is OK, you may delete these files. But the choice is yours."
 echo "You may have to re-run this script after you install Microsoft Office updates"

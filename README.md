@@ -1,12 +1,22 @@
+# Things You Must Understand Before Using:
+Read it twice, please:
+https://github.com/goodbest/OfficeThinner/issues/7
+
 # OfficeThinner
 Save your disk space with Office 2016 for Mac.
 
-Nearly 3.7GB HDD/SDD space can be saved.
+Nearly 2.9GB HDD/SDD space can be saved.
+
+![compare](fig_compare.jpg)
 
 ## Attention!
-- This script is only for `Office 2016 for Mac`, tested on version `15.16 (151105)`
+- This script is only for `Office 2016 for Mac`, tested on 
+  - version `15.16 (151105)`
+  - version `15.17 (151206)`
+  - version `15.18 (160109)`
 - Use at your own risk.
 - Read the code before you run.
+- Make sure all the 5 Office Apps are in the same version.
 
 ## Usage
 ```
@@ -23,8 +33,9 @@ It's wasting your precious HDD/SSD space as these files are just 5 duplicate cop
 
 This script moves the following duplicate files from Excel, PowerPoint, Outlook and OneNote into a backup directory on your desktop (you may later delete them safely), and then soft link neccesary paths back to the real files in Word.app alone.
 
-- /Contents/Resources/Fonts
+- /Contents/Resources/Fonts (<=15.16)
+- /Contents/Resources/DFonts (>=15.17)
 - /Contents/SharedSupport/Proofing Tools
-- /Contents/Frameworks/MicrosoftOffice.framework/Versions/A/Resources
+- ~~/Contents/Frameworks/MicrosoftOffice.framework/Versions/A/Resources~~
 
 
